@@ -1,0 +1,552 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>К.Д. Бальмонт — Русский символизм</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Marck+Script&family=Patrick+Hand&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --paper: #f5eedc;
+  --ink: #35312d;
+  --pencil: #77716a;
+  --red: #a64d42;
+  --line: rgba(91,130,157,.17);
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  min-height:100vh;
+  background:#292723;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:'Patrick Hand',cursive;
+  overflow:hidden;
+  color:var(--ink);
+}
+
+.deck {
+  width:min(1100px,95vw);
+  height:min(690px,88vh);
+  position:relative;
+  background:var(--paper);
+  overflow:hidden;
+  box-shadow:0 20px 80px #0009;
+  border:1px solid #d4c7ac;
+}
+
+.deck::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      transparent 0px,
+      transparent 35px,
+      var(--line) 36px
+    );
+  pointer-events:none;
+}
+
+.deck::after {
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:65px;
+  width:2px;
+  background:#c77e72;
+  opacity:.45;
+  pointer-events:none;
+}
+
+.slide {
+  position:absolute;
+  inset:0;
+  padding:65px 85px 75px 105px;
+  opacity:0;
+  transform:translateX(50px) rotate(1deg);
+  pointer-events:none;
+  transition:.65s cubic-bezier(.2,.8,.2,1);
+  overflow-y:auto;
+  z-index:1;
+}
+
+.slide.active {
+  opacity:1;
+  transform:translateX(0) rotate(0);
+  pointer-events:auto;
+}
+
+.slide.exit {
+  transform:translateX(-50px) rotate(-1deg);
+}
+
+h1,h2,h3 {
+  font-family:'Caveat',cursive;
+  font-weight:700;
+}
+
+h1 {
+  font-size:clamp(48px,8vw,88px);
+  line-height:1;
+}
+
+h2 {
+  font-size:clamp(35px,5vw,53px);
+  margin-bottom:20px;
+}
+
+p,li {
+  font-size:clamp(19px,2.5vw,25px);
+  line-height:1.5;
+}
+
+.subtitle {
+  font-family:'Marck Script',cursive;
+  font-size:clamp(25px,4vw,38px);
+  color:#74634f;
+  margin-top:16px;
+}
+
+.under {
+  display:inline-block;
+  position:relative;
+}
+
+.under::after {
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:3px;
+  background:var(--red);
+  transform:rotate(-1.5deg);
+}
+
+.content {
+  max-width:760px;
+  position:relative;
+  z-index:2;
+}
+
+.columns {
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:25px;
+  align-items:center;
+}
+
+.note {
+  background:#e9dfc9;
+  padding:20px 24px;
+  border:1px solid #c8b99d;
+  box-shadow:3px 4px 0 #b6a58b;
+  transform:rotate(-1deg);
+  margin:18px 0;
+}
+
+.note p {font-size:21px;}
+
+.sketch {
+  border:2px solid #625d54;
+  padding:9px;
+  transform:rotate(2deg);
+  background:#eee5d2;
+  box-shadow:5px 6px 0 #c7b99f;
+  position:relative;
+}
+
+.sketch img {
+  width:100%;
+  display:block;
+  filter:grayscale(1) sepia(.2) contrast(.85);
+}
+
+.sketch-label {
+  font-family:'Caveat',cursive;
+  text-align:center;
+  font-size:23px;
+  margin-top:8px;
+}
+
+ul {
+  padding-left:27px;
+}
+
+li {margin:8px 0;}
+
+.stamp {
+  display:inline-block;
+  border:2px solid var(--red);
+  color:var(--red);
+  padding:5px 14px;
+  font-family:'Caveat',cursive;
+  font-size:23px;
+  transform:rotate(-5deg);
+  margin-bottom:15px;
+}
+
+.big-number {
+  font-family:'Caveat',cursive;
+  font-size:80px;
+  color:#a69a82;
+  opacity:.5;
+  position:absolute;
+  right:35px;
+  top:15px;
+}
+
+.poem {
+  font-family:'Marck Script',cursive;
+  font-size:clamp(23px,3.5vw,33px);
+  line-height:1.5;
+  text-align:center;
+  border-left:3px solid #a64d42;
+  padding:15px 20px;
+  background:#eae1d0;
+  transform:rotate(-1deg);
+  margin-top:20px;
+}
+
+.handwriting {
+  font-family:'Marck Script',cursive;
+  font-size:28px;
+  color:#6c5145;
+}
+
+.doodle {
+  position:absolute;
+  right:35px;
+  bottom:75px;
+  font-size:65px;
+  opacity:.45;
+  transform:rotate(-15deg);
+}
+
+.controls {
+  position:absolute;
+  z-index:10;
+  bottom:16px;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:22px;
+}
+
+.controls button {
+  border:1px solid #887b67;
+  background:#eee4d0;
+  color:#37312b;
+  border-radius:50%;
+  width:42px;
+  height:42px;
+  font-size:24px;
+  cursor:pointer;
+  font-family:inherit;
+  transition:.25s;
+}
+
+.controls button:hover {
+  background:#c8b99f;
+  transform:scale(1.12) rotate(-8deg);
+}
+
+.counter {
+  font-family:'Caveat',cursive;
+  font-size:23px;
+}
+
+.progress {
+  position:absolute;
+  top:0;
+  left:0;
+  height:5px;
+  background:var(--red);
+  width:14.28%;
+  transition:width .5s;
+  z-index:20;
+}
+
+.reveal {
+  opacity:0;
+  transform:translateY(20px);
+  animation:write .8s forwards;
+}
+
+.active .reveal:nth-child(1){animation-delay:.15s}
+.active .reveal:nth-child(2){animation-delay:.3s}
+.active .reveal:nth-child(3){animation-delay:.45s}
+.active .reveal:nth-child(4){animation-delay:.6s}
+.active .reveal:nth-child(5){animation-delay:.75s}
+
+@keyframes write {
+  to {opacity:1;transform:translateY(0)}
+}
+
+.floating {
+  animation:float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  50% {transform:translateY(-10px) rotate(2deg)}
+}
+
+@keyframes wiggle {
+  0%,100%{transform:rotate(-2deg)}
+  50%{transform:rotate(2deg)}
+}
+
+.sketch {animation:wiggle 7s ease-in-out infinite}
+
+.footer {
+  position:absolute;
+  bottom:18px;
+  right:25px;
+  font-family:'Caveat',cursive;
+  color:#887e6b;
+  font-size:18px;
+}
+
+@media(max-width:650px) {
+  .deck {width:96vw;height:94vh;}
+  .deck::after {left:22px;}
+  .slide {padding:45px 22px 75px 43px;}
+  .columns {grid-template-columns:1fr;}
+  .sketch {max-width:230px;margin:auto;}
+  .doodle {font-size:35px;}
+  p,li {font-size:19px;}
+  .big-number {font-size:50px;right:12px;}
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation:none!important;
+    transition:none!important;
+  }
+  .reveal {opacity:1;transform:none;}
+}
+</style>
+</head>
+
+<body>
+
+<main class="deck">
+
+<div class="progress" id="progress"></div>
+
+<!-- СЛАЙД 1 -->
+<section class="slide active">
+  <div class="big-number">01</div>
+  <div class="content">
+    <div class="stamp reveal">Русская литература</div>
+    <h1 class="reveal">К.Д.<br><span class="under">Бальмонт</span></h1>
+    <div class="subtitle reveal">Представитель русского символизма</div>
+    <div class="note reveal" style="margin-top:35px;max-width:510px">
+      <p>Жизнь, творчество и поэтический мир одного из ярких представителей Серебряного века.</p>
+    </div>
+    <p class="handwriting reveal">Выполнил(а): Мырзакулов Бегалы</p>
+  </div>
+  <div class="doodle floating">✎</div>
+  <div class="footer">Литература • 01</div>
+</section>
+
+<!-- СЛАЙД 2 -->
+<section class="slide">
+  <div class="big-number">02</div>
+  <h2 class="reveal">Кто такой Бальмонт?</h2>
+  <div class="columns">
+    <div class="content">
+      <p class="reveal">Константин Дмитриевич Бальмонт — русский поэт, переводчик и один из известных представителей символизма.</p>
+      <ul>
+        <li class="reveal">Родился 15 июня 1867 года.</li>
+        <li class="reveal">Родом из Владимирской губернии.</li>
+        <li class="reveal">Умер 23 декабря 1942 года во Франции.</li>
+      </ul>
+      <div class="note reveal">
+        <p>Его поэзия известна музыкальностью, яркими образами природы и глубокими чувствами.</p>
+      </div>
+    </div>
+    <div class="sketch floating">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Konstantin_Balmont_1905.jpg/440px-Konstantin_Balmont_1905.jpg" alt="Портрет Константина Бальмонта">
+      <div class="sketch-label">К.Д. Бальмонт</div>
+    </div>
+  </div>
+  <div class="footer">Биография • 02</div>
+</section>
+
+<!-- СЛАЙД 3 -->
+<section class="slide">
+  <div class="big-number">03</div>
+  <h2 class="reveal">Детство и образование</h2>
+  <div class="content">
+    <p class="reveal">Будущий поэт родился в семье, где ценили книги, образование и культуру.</p>
+    <div class="note reveal">
+      <p><b>Детство.</b> Бальмонт рос в деревне Гумнищи Владимирской губернии. С ранних лет интересовался литературой.</p>
+    </div>
+    <div class="note reveal" style="transform:rotate(1deg)">
+      <p><b>Образование.</b> Учился в гимназии, затем поступил в Московский университет, но не завершил обучение.</p>
+    </div>
+    <div class="note reveal">
+      <p><b>Начало творчества.</b> С юности писал стихи и постепенно находил собственный литературный стиль.</p>
+    </div>
+  </div>
+  <div class="doodle">✒</div>
+  <div class="footer">Биография • 03</div>
+</section>
+
+<!-- СЛАЙД 4 -->
+<section class="slide">
+  <div class="big-number">04</div>
+  <h2 class="reveal">Что такое символизм?</h2>
+  <div class="content">
+    <p class="reveal">Символизм — литературное направление, в котором поэты передают мысли и чувства через символы, образы и скрытые значения.</p>
+    <div class="poem reveal">
+      Не просто описать природу,<br>
+      А передать её настроение,<br>
+      Не просто назвать предмет,<br>
+      А показать его тайный смысл.
+    </div>
+    <h3 class="reveal" style="font-size:32px;margin-top:25px">Главные особенности:</h3>
+    <ul>
+      <li class="reveal">Символы и загадочные образы.</li>
+      <li class="reveal">Музыкальность и ритм стихов.</li>
+      <li class="reveal">Мечты, чувства и переживания.</li>
+      <li class="reveal">Красота природы и духовный мир человека.</li>
+    </ul>
+  </div>
+  <div class="footer">Литературное направление • 04</div>
+</section>
+
+<!-- СЛАЙД 5 -->
+<section class="slide">
+  <div class="big-number">05</div>
+  <h2 class="reveal">Особенности творчества</h2>
+  <div class="columns">
+    <div class="content">
+      <p class="reveal">Бальмонт стремился сделать стихи похожими на музыку. Его произведения наполнены яркими красками, звуками и движением.</p>
+      <ul>
+        <li class="reveal">Любовь к природе.</li>
+        <li class="reveal">Образы солнца, моря, ветра и огня.</li>
+        <li class="reveal">Свободное выражение чувств.</li>
+        <li class="reveal">Красивый и мелодичный язык.</li>
+      </ul>
+      <p class="handwriting reveal">«Поэзия — это музыка души»</p>
+    </div>
+    <div class="sketch floating">
+      <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=600" alt="Пейзаж гор и озера">
+      <div class="sketch-label">Красота природы</div>
+    </div>
+  </div>
+  <div class="footer">Творчество • 05</div>
+</section>
+
+<!-- СЛАЙД 6 -->
+<section class="slide">
+  <div class="big-number">06</div>
+  <h2 class="reveal">Известные произведения</h2>
+  <div class="content">
+    <p class="reveal">Бальмонт оставил большое литературное наследие. Его сборники получили известность среди читателей.</p>
+    <div class="note reveal">
+      <h3 style="font-size:30px">«Под северным небом» (1894)</h3>
+      <p>Один из ранних поэтических сборников автора.</p>
+    </div>
+    <div class="note reveal">
+      <h3 style="font-size:30px">«В безбрежности» (1895)</h3>
+      <p>Сборник, в котором проявляются черты символистской поэзии.</p>
+    </div>
+    <div class="note reveal">
+      <h3 style="font-size:30px">«Горящие здания» (1900)</h3>
+      <p>Один из важных сборников поэта.</p>
+    </div>
+    <div class="note reveal">
+      <h3 style="font-size:30px">«Будем как Солнце» (1903)</h3>
+      <p>Одна из наиболее известных книг Бальмонта.</p>
+    </div>
+  </div>
+  <div class="footer">Произведения • 06</div>
+</section>
+
+<!-- СЛАЙД 7 -->
+<section class="slide">
+  <div class="big-number">07</div>
+  <h2 class="reveal">Значение и наследие</h2>
+  <div class="content">
+    <p class="reveal">Константин Бальмонт занимает важное место в истории русской литературы.</p>
+    <div class="note reveal">
+      <p>Он помог развитию русского символизма и оказал влияние на поэзию Серебряного века.</p>
+    </div>
+    <p class="reveal">Его стихи продолжают читать благодаря необычному языку, музыкальности и красоте художественных образов.</p>
+    <div class="poem reveal" style="margin-top:30px">
+      Спасибо за внимание!
+    </div>
+    <p class="handwriting reveal" style="text-align:center;margin-top:20px">
+      Конец презентации ✍
+    </p>
+  </div>
+  <div class="doodle floating">❀</div>
+  <div class="footer">Заключение • 07</div>
+</section>
+
+<div class="controls">
+  <button onclick="changeSlide(-1)" aria-label="Предыдущий слайд">←</button>
+  <span class="counter" id="counter">1 / 7</span>
+  <button onclick="changeSlide(1)" aria-label="Следующий слайд">→</button>
+</div>
+
+</main>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const counter = document.getElementById('counter');
+const progress = document.getElementById('progress');
+
+let current = 0;
+
+function showSlide(index) {
+  slides[current].classList.remove('active');
+
+  current = (index + slides.length) % slides.length;
+
+  slides.forEach((slide, i) => {
+    slide.classList.toggle('active', i === current);
+    slide.scrollTop = 0;
+  });
+
+  counter.textContent = `${current + 1} / ${slides.length}`;
+  progress.style.width = `${(current + 1) / slides.length * 100}%`;
+}
+
+function changeSlide(direction) {
+  showSlide(current + direction);
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+  if(e.key === 'ArrowLeft') changeSlide(-1);
+});
+
+let touchStart = 0;
+
+document.querySelector('.deck').addEventListener('touchstart', e => {
+  touchStart = e.changedTouches[0].screenX;
+}, {passive:true});
+
+document.querySelector('.deck').addEventListener('touchend', e => {
+  let difference = e.changedTouches[0].screenX - touchStart;
+  if(Math.abs(difference) > 65) {
+    changeSlide(difference < 0 ? 1 : -1);
+  }
+}, {passive:true});
+</script>
+
+</body>
+</html>
